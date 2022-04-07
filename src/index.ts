@@ -23,8 +23,6 @@ app.get("/play", (request, response) => {
         return
     }
 
-    console.log(query)
-
     const media = query.media as string
     playMedia(media)
 
