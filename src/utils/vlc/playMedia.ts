@@ -15,8 +15,11 @@ export async function playMedia(file: string, config?: PlayMediaConfig) {
         command.push("--loop")
 
     try {
-        const result = await execute(command.join(" "))
+        const commandStr = command.join(" ")
+        console.log("Command:", commandStr)
+        const result = await execute(commandStr)
 
+        console.log("Result:", result)
         return result
     } catch (error) {
         throw (error)
