@@ -9,7 +9,7 @@ app.get("/", (request, response) => {
     })
 })
 
-app.get("/play", (request, response) => {
+app.get("/play", async (request, response) => {
     const { query } = request
 
     if (!query.audio) {
@@ -22,7 +22,14 @@ app.get("/play", (request, response) => {
         return
     }
 
-    playMedia(query.audio as string)
+    try {
+        const { stdout, stderr } = await playMedia(query.audio as string)
+        
+        console.log("Stdout:", stdout)
+        console.log("Stderr:", stderr)
+    } catch (error) {
+        
+    }
 
     response.json("Playing Audio")
 })
