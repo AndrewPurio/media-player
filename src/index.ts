@@ -10,7 +10,7 @@ app.get("/", (request, response) => {
     })
 })
 
-app.get("/play", async (request, response) => {
+app.get("/play", (request, response) => {
     const { query } = request
 
     if (!query.media) {
@@ -25,20 +25,8 @@ app.get("/play", async (request, response) => {
 
     console.log(query)
 
-    try {
-        const media = query.media as string
-        const { stdout, stderr } = await playMedia(media)
-
-        console.log("Stdout:", stdout)
-        console.log("Stderr:", stderr)
-    } catch (e) {
-        const { message } = e as Error
-        response.status(400)
-
-        response.json({
-            message
-        })
-    }
+    const media = query.media as string
+    playMedia(media)
 
     response.json("Playing Media")
 })
