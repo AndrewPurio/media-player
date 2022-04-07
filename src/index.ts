@@ -3,6 +3,10 @@ import express, { Express, Request, response, Response } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
+import type { PlayMedia } from "./types"
+import playerctl from './utils/playerctl';
+import { playMedia } from './utils/vlc';
+
 const port = 3000
 // const dev = process.env.NODE_ENV !== 'production';
 
@@ -25,21 +29,31 @@ app.get("/", (request, response) => {
 io.on("connection", (socket) => {
     console.log('Connected:', socket.id);
 
+    socket.on("playMusic", ({ path, loop }: PlayMedia) => {
+        try {
+            playMedia(path, {
+                loop: !!loop
+            })
+        } catch (error) {
+            socket.emit("error", error)
+        }
+    })
+
+    socket.on("play", () => {
+        playerctl("play")
+    })
+
+    socket.on("pause", (data) => {
+        playerctl("pause")
+    })
+
+    socket.on("stop", (data) => {
+        playerctl("stop")
+    })
+
     socket.on('disconnect', () => {
         console.log('Disconnected:', socket.id)
     })
-})
-
-io.on("play", (data) => {
-    console.log("Data:", data)
-})
-
-io.on("pause", (data) => {
-    console.log("Data:", data)
-})
-
-io.on("stop", (data) => {
-    console.log("Data:", data)
 })
 
 server.listen(port, () => {

@@ -29,25 +29,39 @@
     <p>Socket Client</p>
     <form id="form">
         <input type="text" name="path" />
+        <input type="checkbox" name="loop" />
+        <label for="loop">Loop</label>
 
         <button type="submit">Play</button>
     </form>
 
     <button id="pause">Pause</button>
+    <button id="play">Resume</button>
 
     <script>
         const form = document.getElementById("form")
+        const pauseButton = document.getElementById("pause")
+        const playButton = document.getElementById("play")
 
         function onSubmit(event) {
+            event.preventDefault()
+
             const formData = new FormData(event.target)
             const data = Object.fromEntries(formData.entries())
 
-            socket.emit("play", data)
+            socket.emit("playMusic", data)
         }
 
         function pause() {
-            socket.emit("play", "Pause Music")
+            socket.emit("pause")
         }
+
+        function resume() {
+            socket.emit("play")
+        }
+
+        form.addEventListener("submit", onSubmit)
+        pauseButton.addEventListener("click", pause)
     </script>
 </body>
 
