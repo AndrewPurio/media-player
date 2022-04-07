@@ -2,6 +2,7 @@ import express from "express"
 import { playMedia } from "./utils/vlc/index"
 
 const app = express()
+const port = 4000
 
 app.get("/", (request, response) => {
     response.json({
@@ -12,26 +13,36 @@ app.get("/", (request, response) => {
 app.get("/play", async (request, response) => {
     const { query } = request
 
-    if (!query.audio) {
+    if (!query.media) {
         response.status(400)
 
         response.json({
-            "message": `Missing "audio" query which is either a file path or a url`
+            "message": `Missing "media" query which is either a file path or a url`
         })
 
         return
     }
 
+    console.log(query)
+
     try {
-        const { stdout, stderr } = await playMedia(query.audio as string)
-        
+        const media = query.media as string
+        const { stdout, stderr } = await playMedia(media)
+
         console.log("Stdout:", stdout)
         console.log("Stderr:", stderr)
-    } catch (error) {
-        
+    } catch (e) {
+        const { message } = e as Error
+        response.status(400)
+
+        response.json({
+            message
+        })
     }
 
-    response.json("Playing Audio")
+    response.json("Playing Media")
 })
 
-app.listen(3000)
+app.listen(port, () => {
+    console.log(`App listening at "http://localhost:${port}"`)
+})
