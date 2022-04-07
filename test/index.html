@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket Client</title>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "socket.io-client": "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
+          }
+        }
+    </script>
+
+    <script type="module">
+        import { io } from "socket.io-client";
+
+        const socket = io("ws://localhost:3000");
+
+        window.socket = socket
+
+        socket.on("connect", () => {
+            console.log("Connected to socket server")
+        })
+    </script>
+</head>
+
+<body>
+    <p>Socket Client</p>
+    <form id="form">
+        <input type="text" name="path" />
+
+        <button type="submit">Play</button>
+    </form>
+
+    <button id="pause">Pause</button>
+
+    <script>
+        const form = document.getElementById("form")
+
+        function onSubmit(event) {
+            const formData = new FormData(event.target)
+            const data = Object.fromEntries(formData.entries())
+
+            socket.emit("play", data)
+        }
+
+        function pause() {
+            socket.emit("play", "Pause Music")
+        }
+    </script>
+</body>
+
+</html>

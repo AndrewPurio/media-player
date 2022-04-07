@@ -11,6 +11,7 @@ export interface PlayMediaConfig {
  */
 export async function playMedia(file: string, config?: PlayMediaConfig) {
     try {
+        // await playerctl("stop")
         const command = ["cvlc", file]
 
         if (config?.loop)
