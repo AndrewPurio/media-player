@@ -64,6 +64,7 @@ io.on("connection", (socket) => {
         value: number
     }) => {
         if (data) {
+            data.value /= 100
             playerctl("volume", data)
             return
         }
