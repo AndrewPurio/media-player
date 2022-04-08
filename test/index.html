@@ -37,11 +37,17 @@
 
     <button id="pause">Pause</button>
     <button id="play">Resume</button>
+    <button id="play-pause">Pause/Resume</button>
+
+    <input type="range" min="0" max="100" id="volume" name="value" />
+    <label for="value">Volume</label>
 
     <script>
         const form = document.getElementById("form")
         const pauseButton = document.getElementById("pause")
         const playButton = document.getElementById("play")
+        const playPauseButton = document.getElementById("play-pause")
+        const volumeSlider = document.getElementById("volume")
 
         function onSubmit(event) {
             event.preventDefault()
@@ -60,8 +66,22 @@
             socket.emit("play")
         }
 
+        function playPause() {
+            socket.emit("play-pause")
+        }
+
+        function onSlide(event) {
+            console.log("Event:", event.target.valueAsNumber)
+            socket.emit("volume", {
+                value: event.target.valueAsNumber
+            })
+        }
+
         form.addEventListener("submit", onSubmit)
         pauseButton.addEventListener("click", pause)
+        playButton.addEventListener("click", resume)
+        playPauseButton.addEventListener("click", playPause)
+        volumeSlider.addEventListener("input", onSlide)
     </script>
 </body>
 

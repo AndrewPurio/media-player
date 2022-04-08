@@ -27,6 +27,7 @@ app.get("/", (request, response) => {
 })
 
 io.on("connection", (socket) => {
+    // let playerTracker: NodeJS.Timer
     console.log('Connected:', socket.id);
 
     socket.on("playMusic", ({ path, loop }: PlayMedia) => {
@@ -34,6 +35,10 @@ io.on("connection", (socket) => {
             playMedia(path, {
                 loop: !!loop
             })
+
+            // playerTracker = setInterval(() => {
+
+            // }, 1000)
         } catch (error) {
             socket.emit("error", error)
         }
@@ -47,12 +52,29 @@ io.on("connection", (socket) => {
         playerctl("pause")
     })
 
-    socket.on("stop", (data) => {
+    socket.on("play-pause", () => {
+        playerctl("play-pause")
+    })
+
+    socket.on("stop", () => {
         playerctl("stop")
+    })
+
+    socket.on("volume", (data?: {
+        value: number
+    }) => {
+        if (data) {
+            playerctl("volume", data)
+            return
+        }
+
+        playerctl("volume")
     })
 
     socket.on('disconnect', () => {
         console.log('Disconnected:', socket.id)
+
+        // clearInterval(playyerTracker)
     })
 })
 

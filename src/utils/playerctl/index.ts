@@ -1,11 +1,16 @@
 import { execute } from "../execute"
-import { MediaPlayerEvent } from "../types"
+import { MediaPlayerConfig, MediaPlayerEvent } from "../types"
 
-export default async function playerctl(command: keyof typeof MediaPlayerEvent) {
-    const playerCommand = `playerctl ${command}`
+export default async function playerctl(command: keyof typeof MediaPlayerEvent, config?: MediaPlayerConfig) {
+    const playerCommand = ["playerctl", command]
+
+    if (config) {
+        playerCommand.push(config.value.toString())
+    }
 
     try {
-        const { stderr, stdout } = await execute(playerCommand)
+        const command = playerCommand.join(" ")
+        const { stderr, stdout } = await execute(command)
 
         return {
             stderr, stdout

@@ -3,5 +3,10 @@ export enum MediaPlayerEvent {
     pause,
     "play-pause",
     stop,
-    status
+    status,
+    volume
+}
+
+export interface MediaPlayerConfig {
+    value: number
 }
