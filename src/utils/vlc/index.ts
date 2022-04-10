@@ -42,9 +42,7 @@ export default class MediaPlayer {
         this.player = cvlc
     }
 
-    public stopMedia() {
-        console.log("Player Killed!!")
-
-        this.player.kill("SIGHUP")
+    public async stopMedia() {
+        await execute(`kill ${this.player.pid}`)
     }
 }

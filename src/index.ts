@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
     socket.on("playMusic", async ({ path, loop }: PlayMedia) => {
         try {
             // Kill previous player instance to prevent music playing simultaneously
-            mediaPlayer.stopMedia()
+            await mediaPlayer.stopMedia()
 
             mediaPlayer.playMedia(path, {
                 loop: !!loop
