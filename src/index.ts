@@ -32,7 +32,7 @@ io.on("connection", (socket) => {
     console.log('Connected:', socket.id);
     const mediaPlayer = new MediaPlayer()
 
-    const playMediaCallback = async ({ path, loop }: PlayMedia) => {
+    const playMediaCallback = ({ path, loop }: PlayMedia) => {
         const stopMedia = (mediaPlayer: MediaPlayer) => {
             mediaPlayer.getPlayer().kill("SIGHUP")
         }
@@ -44,16 +44,7 @@ io.on("connection", (socket) => {
         })
     }
 
-    socket.on("playMusic", async ({ path, loop }: PlayMedia) => {
-        try {
-            // Kill previous player instance to prevent music playing simultaneously
-            mediaPlayer.playMedia(path, {
-                loop: !!loop
-            })
-        } catch (error) {
-            socket.emit("error", error)
-        }
-    })
+    socket.on("playMusic", playMediaCallback)
 
     socket.on("play", () => {
         playerctl("play")
