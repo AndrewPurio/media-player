@@ -33,13 +33,14 @@ io.on("connection", (socket) => {
     socket.on("playMusic", async ({ path, loop }: PlayMedia) => {
         try {
             // Kill previous player instance to prevent music playing simultaneously
+            console.log("Previous Args:", mediaPlayer.getPlayer().spawnargs)
             await mediaPlayer.stopMedia()
 
             mediaPlayer.playMedia(path, {
                 loop: !!loop
             })
 
-            console.log("Current Player:", mediaPlayer.getPlayer())
+            console.log("Current Args:", mediaPlayer.getPlayer().spawnargs)
         } catch (error) {
             socket.emit("error", error)
         }
