@@ -20,6 +20,10 @@ export function playMedia(file: string, config?: PlayMediaConfig) {
     return cvlc
 }
 
+export async function stopMedia(pid: number) {
+    await execute(`kill ${pid}`)
+}
+
 export default class MediaPlayer {
     private player: ChildProcessWithoutNullStreams
 
@@ -40,9 +44,5 @@ export default class MediaPlayer {
         const cvlc = spawn("cvlc", options)
 
         this.player = cvlc
-    }
-
-    public async stopMedia() {
-        await execute(`kill ${this.player.pid}`)
     }
 }

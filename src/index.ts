@@ -2,10 +2,11 @@ import cors from 'cors';
 import express, { Express, Request, response, Response } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import store from 'store2';
 
 import type { PlayMedia } from "./types"
 import playerctl from './utils/playerctl';
-import MediaPlayer from './utils/vlc';
+import MediaPlayer, { stopMedia } from './utils/vlc';
 
 const port = 3000
 // const dev = process.env.NODE_ENV !== 'production';
@@ -29,18 +30,25 @@ app.get("/", (request, response) => {
 io.on("connection", (socket) => {
     console.log('Connected:', socket.id);
     const mediaPlayer = new MediaPlayer()
+    const userStore = {
+        mediaPlayerId: mediaPlayer.getPlayer().pid,
+        spawnArgs: mediaPlayer.getPlayer().spawnargs
+    }
+
+    store.set(socket.id, userStore)
 
     socket.on("playMusic", async ({ path, loop }: PlayMedia) => {
         try {
             // Kill previous player instance to prevent music playing simultaneously
-            console.log("Previous Args:", mediaPlayer.getPlayer().spawnargs)
-            await mediaPlayer.stopMedia()
+            const data: typeof userStore = await store.get(socket.id)
+
+            console.log("Data:", data)
+
+            await stopMedia(data.mediaPlayerId as number)
 
             mediaPlayer.playMedia(path, {
                 loop: !!loop
             })
-
-            console.log("Current Args:", mediaPlayer.getPlayer().spawnargs)
         } catch (error) {
             socket.emit("error", error)
         }
