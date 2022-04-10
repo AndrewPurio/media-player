@@ -43,7 +43,7 @@ io.on("connection", (socket) => {
                 loop: !!loop
             })
 
-            console.log("Player")
+            console.log("Player:", player)
         } catch (error) {
             socket.emit("error", error)
         }
