@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import store from 'store2';
 
 import type { PlayMedia } from "./types"
+import { execute } from './utils/execute';
 import playerctl from './utils/playerctl';
 import MediaPlayer, { stopMedia } from './utils/vlc';
 
@@ -42,20 +43,21 @@ io.on("connection", (socket) => {
             // Kill previous player instance to prevent music playing simultaneously
             const data: typeof userStore = await store.get(socket.id)
 
-            console.log("Data:", data)
-
             await stopMedia(data.mediaPlayerId as number)
+            await execute("killall vlc")
 
-            mediaPlayer.playMedia(path, {
-                loop: !!loop
-            })
+            setTimeout(() => {
+                mediaPlayer.playMedia(path, {
+                    loop: !!loop
+                })
 
-            const mediaStore = {
-                mediaPlayerId: mediaPlayer.getPlayer().pid,
-                spawnArgs: mediaPlayer.getPlayer().spawnargs
-            }
+                const mediaStore = {
+                    mediaPlayerId: mediaPlayer.getPlayer().pid,
+                    spawnArgs: mediaPlayer.getPlayer().spawnargs
+                }
 
-            store.set(socket.id, mediaStore)
+                store.set(socket.id, mediaStore)
+            }, 200)
         } catch (error) {
             socket.emit("error", error)
         }
