@@ -1,5 +1,5 @@
+import { spawn } from "child_process";
 import { execute } from "../execute";
-import playerctl from "../playerctl"
 
 export interface PlayMediaConfig {
     loop?: boolean
@@ -9,19 +9,28 @@ export interface PlayMediaConfig {
  * Play a media file/url
  * @param file The absolute path or url of the media to play
  */
-export async function playMedia(file: string, config?: PlayMediaConfig) {
-    try {
-        // await playerctl("stop")
-        const command = ["cvlc", `'${file}'`]
+export function playMedia(file: string, config?: PlayMediaConfig) {
+    const options = [ file ] 
 
-        if (config?.loop)
-            command.push("--loop")
+    if(config?.loop)
+        options.push("--loop")
 
-        const commandStr = command.join(" ")
-        const result = await execute(commandStr)
+    //     if (config?.loop)
+    //         command.push("--loop")
+    // try {
+    //     const command = ["cvlc", `'${file}'`]
 
-        return result
-    } catch (error) {
-        throw (error)
-    }
+    //     if (config?.loop)
+    //         command.push("--loop")
+
+    //     const commandStr = command.join(" ")
+    //     const result = await execute(commandStr)
+
+    //     return result
+    // } catch (error) {
+    //     throw (error)
+    // }
+    const cvlc = spawn("cvlc", options)
+
+    return cvlc
 }

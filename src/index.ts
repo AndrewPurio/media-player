@@ -2,6 +2,7 @@ import cors from 'cors';
 import express, { Express, Request, response, Response } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { ChildProcessWithoutNullStreams } from 'child_process';
 
 import type { PlayMedia } from "./types"
 import playerctl from './utils/playerctl';
@@ -27,20 +28,18 @@ app.get("/", (request, response) => {
 })
 
 io.on("connection", (socket) => {
-    // let playerTracker: NodeJS.Timer
+    let player: ChildProcessWithoutNullStreams
     console.log('Connected:', socket.id);
 
     socket.on("playMusic", ({ path, loop }: PlayMedia) => {
         try {
-            playerctl("stop")
+            // Kill previous player instance to prevent music playing simultaneously
+            if(player)
+                player.kill()
 
-            playMedia(path, {
+            player = playMedia(path, {
                 loop: !!loop
             })
-
-            // playerTracker = setInterval(() => {
-
-            // }, 1000)
         } catch (error) {
             socket.emit("error", error)
         }
