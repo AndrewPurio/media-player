@@ -7,6 +7,7 @@ import { ChildProcessWithoutNullStreams } from 'child_process';
 import type { PlayMedia } from "./types"
 import playerctl from './utils/playerctl';
 import { playMedia } from './utils/vlc';
+import { execute } from './utils/execute';
 
 const port = 3000
 // const dev = process.env.NODE_ENV !== 'production';
@@ -28,22 +29,16 @@ app.get("/", (request, response) => {
 })
 
 io.on("connection", (socket) => {
-    let player: ChildProcessWithoutNullStreams
     console.log('Connected:', socket.id);
 
-    socket.on("playMusic", ({ path, loop }: PlayMedia) => {
+    socket.on("playMusic", async ({ path, loop }: PlayMedia) => {
         try {
-            console.log("Player:", player)
-
             // Kill previous player instance to prevent music playing simultaneously
-            if(player)
-                player.kill()
+            await execute("killall vlc")
 
-            player = playMedia(path, {
+            playMedia(path, {
                 loop: !!loop
             })
-
-            console.log("Player:", player)
         } catch (error) {
             socket.emit("error", error)
         }
