@@ -1,4 +1,4 @@
-import { spawn } from "child_process";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { execute } from "../execute";
 
 export interface PlayMediaConfig {
@@ -10,12 +10,39 @@ export interface PlayMediaConfig {
  * @param file The absolute path or url of the media to play
  */
 export function playMedia(file: string, config?: PlayMediaConfig) {
-    const options = [ file ] 
+    const options = [file]
 
-    if(config?.loop)
+    if (config?.loop)
         options.push("--loop")
 
     const cvlc = spawn("cvlc", options)
 
     return cvlc
+}
+
+export default class MediaPlayer {
+    private player: ChildProcessWithoutNullStreams
+
+    constructor() {
+        this.player = spawn("cvlc")
+    }
+
+    public getPlayer() {
+        return this.player
+    }
+
+    public playMedia(file: string, config?: PlayMediaConfig) {
+        const options = [file]
+
+        if (config?.loop)
+            options.push("--loop")
+
+        const cvlc = spawn("cvlc", options)
+
+        this.player = cvlc
+    }
+
+    public stopMedia() {
+        this.player.kill()
+    }
 }
