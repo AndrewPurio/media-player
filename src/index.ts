@@ -32,6 +32,8 @@ io.on("connection", (socket) => {
 
     socket.on("playMusic", ({ path, loop }: PlayMedia) => {
         try {
+            playerctl("stop")
+
             playMedia(path, {
                 loop: !!loop
             })

@@ -15,7 +15,7 @@
     <script type="module">
         import { io } from "socket.io-client";
 
-        const socket = io("ws://restnode.local:3000");
+        const socket = io("ws://raspberrypi.local:3000");
 
         window.socket = socket
 
@@ -42,12 +42,15 @@
     <input type="range" min="0" max="100" id="volume" name="value" />
     <label for="value">Volume</label>
 
+    <button id="stop">Stop</button>
+
     <script>
         const form = document.getElementById("form")
         const pauseButton = document.getElementById("pause")
         const playButton = document.getElementById("play")
         const playPauseButton = document.getElementById("play-pause")
         const volumeSlider = document.getElementById("volume")
+        const stopButton = document.getElementById("stop")
 
         function onSubmit(event) {
             event.preventDefault()
@@ -70,6 +73,10 @@
             socket.emit("play-pause")
         }
 
+        function stop() {
+            socket.emit("stop")
+        }
+
         function onSlide(event) {
             console.log("Event:", event.target.valueAsNumber)
             socket.emit("volume", {
@@ -82,6 +89,7 @@
         playButton.addEventListener("click", resume)
         playPauseButton.addEventListener("click", playPause)
         volumeSlider.addEventListener("input", onSlide)
+        stopButton.addEventListener("stop", stop)
     </script>
 </body>
 
