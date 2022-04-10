@@ -39,9 +39,7 @@ io.on("connection", (socket) => {
                 loop: !!loop
             })
 
-            // playMedia(path, {
-            //     loop: !!loop
-            // })
+            console.log("Current Player:", mediaPlayer.getPlayer())
         } catch (error) {
             socket.emit("error", error)
         }
