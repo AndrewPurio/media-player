@@ -49,6 +49,13 @@ io.on("connection", (socket) => {
             mediaPlayer.playMedia(path, {
                 loop: !!loop
             })
+
+            const mediaStore = {
+                mediaPlayerId: mediaPlayer.getPlayer().pid,
+                spawnArgs: mediaPlayer.getPlayer().spawnargs
+            }
+
+            store.set(socket.id, mediaStore)
         } catch (error) {
             socket.emit("error", error)
         }
