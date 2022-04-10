@@ -31,33 +31,25 @@ app.get("/", (request, response) => {
 io.on("connection", (socket) => {
     console.log('Connected:', socket.id);
     const mediaPlayer = new MediaPlayer()
-    const userStore = {
-        mediaPlayerId: mediaPlayer.getPlayer().pid,
-        spawnArgs: mediaPlayer.getPlayer().spawnargs
-    }
 
-    store.set(socket.id, userStore)
+    const playMediaCallback = async ({ path, loop }: PlayMedia) => {
+        const stopMedia = (mediaPlayer: MediaPlayer) => {
+            mediaPlayer.getPlayer().kill("SIGHUP")
+        }
+
+        stopMedia(mediaPlayer)
+
+        mediaPlayer.playMedia(path, {
+            loop: !!loop
+        })
+    }
 
     socket.on("playMusic", async ({ path, loop }: PlayMedia) => {
         try {
             // Kill previous player instance to prevent music playing simultaneously
-            const data: typeof userStore = await store.get(socket.id)
-
-            await stopMedia(data.mediaPlayerId as number)
-            await execute("killall vlc")
-
-            setTimeout(() => {
-                mediaPlayer.playMedia(path, {
-                    loop: !!loop
-                })
-
-                const mediaStore = {
-                    mediaPlayerId: mediaPlayer.getPlayer().pid,
-                    spawnArgs: mediaPlayer.getPlayer().spawnargs
-                }
-
-                store.set(socket.id, mediaStore)
-            }, 200)
+            mediaPlayer.playMedia(path, {
+                loop: !!loop
+            })
         } catch (error) {
             socket.emit("error", error)
         }
