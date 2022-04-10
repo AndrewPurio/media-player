@@ -2,12 +2,11 @@ import cors from 'cors';
 import express, { Express, Request, response, Response } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import store from 'store2';
 
 import type { PlayMedia } from "./types"
 import { execute } from './utils/execute';
 import playerctl from './utils/playerctl';
-import MediaPlayer, { stopMedia } from './utils/vlc';
+import MediaPlayer, { playMedia, stopMedia } from './utils/vlc';
 
 const port = 3000
 // const dev = process.env.NODE_ENV !== 'production';
@@ -30,21 +29,12 @@ app.get("/", (request, response) => {
 
 io.on("connection", (socket) => {
     console.log('Connected:', socket.id);
-    const mediaPlayer = new MediaPlayer()
 
-    const playMediaCallback = ({ path, loop }: PlayMedia) => {
-        const stopMedia = (mediaPlayer: MediaPlayer) => {
-            mediaPlayer.getPlayer().kill("SIGHUP")
-        }
-
-        stopMedia(mediaPlayer)
-
-        mediaPlayer.playMedia(path, {
+    socket.on("playMusic", ({ path, loop }: PlayMedia) => {
+        playMedia(path, {
             loop: !!loop
         })
-    }
-
-    socket.on("playMusic", playMediaCallback)
+    })
 
     socket.on("play", () => {
         playerctl("play")

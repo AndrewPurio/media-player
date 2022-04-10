@@ -15,34 +15,5 @@ export function playMedia(file: string, config?: PlayMediaConfig) {
     if (config?.loop)
         options.push("--loop")
 
-    const cvlc = spawn("cvlc", options)
-
-    return cvlc
-}
-
-export async function stopMedia(pid: number) {
-    await execute(`kill ${pid}`)
-}
-
-export default class MediaPlayer {
-    private player: ChildProcessWithoutNullStreams
-
-    constructor() {
-        this.player = spawn("cvlc")
-    }
-
-    public getPlayer() {
-        return this.player
-    }
-
-    public playMedia(file: string, config?: PlayMediaConfig) {
-        const options = [file]
-
-        if (config?.loop)
-            options.push("--loop")
-
-        const cvlc = spawn("cvlc", options)
-
-        this.player = cvlc
-    }
+    spawn("cvlc", options)
 }
