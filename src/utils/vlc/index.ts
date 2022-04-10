@@ -43,6 +43,8 @@ export default class MediaPlayer {
     }
 
     public stopMedia() {
-        this.player.kill()
+        console.log("Player Killed!!")
+
+        this.player.kill("SIGHUP")
     }
 }

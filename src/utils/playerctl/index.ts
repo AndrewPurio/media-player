@@ -12,8 +12,6 @@ export default async function playerctl(command: keyof typeof MediaPlayerEvent, 
         const command = playerCommand.join(" ")
         const { stderr, stdout } = await execute(command)
 
-        console.log("StdOut:", stderr, stdout)
-
         return {
             stderr, stdout
         }
