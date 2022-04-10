@@ -15,21 +15,6 @@ export function playMedia(file: string, config?: PlayMediaConfig) {
     if(config?.loop)
         options.push("--loop")
 
-    //     if (config?.loop)
-    //         command.push("--loop")
-    // try {
-    //     const command = ["cvlc", `'${file}'`]
-
-    //     if (config?.loop)
-    //         command.push("--loop")
-
-    //     const commandStr = command.join(" ")
-    //     const result = await execute(commandStr)
-
-    //     return result
-    // } catch (error) {
-    //     throw (error)
-    // }
     const cvlc = spawn("cvlc", options)
 
     return cvlc

@@ -33,6 +33,8 @@ io.on("connection", (socket) => {
 
     socket.on("playMusic", ({ path, loop }: PlayMedia) => {
         try {
+            console.log("Player:", player)
+
             // Kill previous player instance to prevent music playing simultaneously
             if(player)
                 player.kill()
@@ -40,6 +42,8 @@ io.on("connection", (socket) => {
             player = playMedia(path, {
                 loop: !!loop
             })
+
+            console.log("Player")
         } catch (error) {
             socket.emit("error", error)
         }
