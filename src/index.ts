@@ -47,7 +47,7 @@ app.post("/playMedia", async (request, response) => {
     }
 
     const { path, loop } = data
-    
+
     playMedia(path, {
         loop: !!loop
     })
@@ -65,7 +65,7 @@ app.post("/playMedia", async (request, response) => {
 
 app.get("/stop", async (request, response) => {
     await playerctl("stop")
-    
+
     const { stdout } = await playerctl("status")
 
     io.sockets.emit("status", {
@@ -78,9 +78,15 @@ app.get("/stop", async (request, response) => {
 })
 
 io.on("connection", (socket) => {
-    socket.on("playMedia", ({ path, loop }: PlayMedia) => {
+    socket.on("playMedia", ({ path, loop, volume }: PlayMedia) => {
         playMedia(path, {
             loop: !!loop
+        })
+
+        const value = volume / 100
+
+        playerctl("volume", {
+            value
         })
     })
 
@@ -106,6 +112,7 @@ io.on("connection", (socket) => {
         if (data) {
             data.value /= 100
             playerctl("volume", data)
+
             return
         }
 
