@@ -46,13 +46,28 @@ app.post("/playMedia", async (request, response) => {
         return
     }
 
-    const { path, loop } = data
+    if (!data.volume) {
+        response.statusCode = 400
+        response.json({
+            message: "Missing volume parameter for the target media to play"
+        })
+
+        return
+    }
+
+    const { path, loop, volume } = data
+    const value = volume / 100
 
     playMedia(path, {
         loop: !!loop
     })
 
+    playerctl("volume", {
+        value
+    })
+
     const { stdout } = await playerctl("status")
+
 
     io.sockets.emit("status", {
         "status": stdout
