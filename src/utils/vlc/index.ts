@@ -1,5 +1,4 @@
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
-import { execute } from "../execute";
+import { spawn } from "child_process";
 
 export interface PlayMediaConfig {
     loop?: boolean

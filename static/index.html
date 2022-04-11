@@ -15,7 +15,7 @@
     <script type="module">
         import { io } from "socket.io-client";
 
-        const socket = io("ws://raspberrypi.local:3000");
+        const socket = io("ws://restnode.local:3000");
 
         window.socket = socket
 
@@ -58,7 +58,7 @@
             const formData = new FormData(event.target)
             const data = Object.fromEntries(formData.entries())
 
-            socket.emit("playMusic", data)
+            socket.emit("playMedia", data)
         }
 
         function pause() {

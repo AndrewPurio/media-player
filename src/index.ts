@@ -4,7 +4,6 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 
 import type { PlayMedia } from "./types"
-import { execute } from './utils/execute';
 import playerctl from './utils/playerctl';
 import { playMedia } from './utils/vlc';
 
@@ -27,10 +26,47 @@ app.get("/", (request, response) => {
     response.json("Hello World")
 })
 
+app.get("/test", (request, response) => {
+    response.sendFile("index.html", {
+        root: "./static"
+    })
+})
+
+app.post("/playMedia", (request, response) => {
+    const { body } = request
+    const data = body as PlayMedia
+
+    if (!data.path) {
+        response.statusCode = 400
+        response.json({
+            message: "Missing path parameter for the target media to play"
+        })
+
+        return
+    }
+
+    const { path, loop } = data
+    playMedia(path, {
+        loop: !!loop
+    })
+
+    response.json({
+        message: "Successfully playing media"
+    })
+})
+
+app.get("/stop", (request, response) => {
+    playerctl("stop")
+
+    response.json({
+        message: "Media playing stopped"
+    })
+})
+
 io.on("connection", (socket) => {
     console.log('Connected:', socket.id);
 
-    socket.on("playMusic", ({ path, loop }: PlayMedia) => {
+    socket.on("playMedia", ({ path, loop }: PlayMedia) => {
         playMedia(path, {
             loop: !!loop
         })
@@ -66,8 +102,6 @@ io.on("connection", (socket) => {
 
     socket.on('disconnect', () => {
         console.log('Disconnected:', socket.id)
-
-        // clearInterval(playyerTracker)
     })
 })
 
