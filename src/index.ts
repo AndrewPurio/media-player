@@ -20,6 +20,7 @@ const io = new Server({
 
 io.attach(server)
 
+app.use(express.json())
 app.use(cors())
 
 app.get("/", (request, response) => {
@@ -35,6 +36,8 @@ app.get("/test", (request, response) => {
 app.post("/playMedia", (request, response) => {
     const { body } = request
     const data = body as PlayMedia
+
+    console.log("Data:", body, data)
 
     if (!data.path) {
         response.statusCode = 400
