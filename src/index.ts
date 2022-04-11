@@ -1,12 +1,12 @@
 import cors from 'cors';
-import express, { Express, Request, response, Response } from 'express';
+import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
 import type { PlayMedia } from "./types"
 import { execute } from './utils/execute';
 import playerctl from './utils/playerctl';
-import MediaPlayer, { playMedia, stopMedia } from './utils/vlc';
+import { playMedia } from './utils/vlc';
 
 const port = 3000
 // const dev = process.env.NODE_ENV !== 'production';
