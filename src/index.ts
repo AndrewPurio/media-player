@@ -33,11 +33,9 @@ app.get("/test", (request, response) => {
     })
 })
 
-app.post("/playMedia", (request, response) => {
+app.post("/playMedia", async (request, response) => {
     const { body } = request
     const data = body as PlayMedia
-
-    console.log("Data:", body, data)
 
     if (!data.path) {
         response.statusCode = 400
@@ -49,8 +47,15 @@ app.post("/playMedia", (request, response) => {
     }
 
     const { path, loop } = data
+    
     playMedia(path, {
         loop: !!loop
+    })
+
+    const { stdout } = await playerctl("status")
+
+    io.sockets.emit("status", {
+        "status": stdout
     })
 
     response.json({
@@ -58,8 +63,14 @@ app.post("/playMedia", (request, response) => {
     })
 })
 
-app.get("/stop", (request, response) => {
-    playerctl("stop")
+app.get("/stop", async (request, response) => {
+    await playerctl("stop")
+    
+    const { stdout } = await playerctl("status")
+
+    io.sockets.emit("status", {
+        "status": stdout
+    })
 
     response.json({
         message: "Media playing stopped"
@@ -67,8 +78,6 @@ app.get("/stop", (request, response) => {
 })
 
 io.on("connection", (socket) => {
-    console.log('Connected:', socket.id);
-
     socket.on("playMedia", ({ path, loop }: PlayMedia) => {
         playMedia(path, {
             loop: !!loop
