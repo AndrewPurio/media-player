@@ -37,6 +37,8 @@ app.post("/playMedia", async (request, response) => {
     const { body } = request
     const data = body as PlayMedia
 
+    console.log("Data:", data)
+
     if (!data.path) {
         response.statusCode = 400
         response.json({
