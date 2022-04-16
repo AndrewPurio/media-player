@@ -123,7 +123,7 @@ io.on("connection", (socket) => {
         playerctl("stop")
     })
 
-    socket.on("volume", (data?: {
+    socket.on("volume", async (data?: {
         value: number
     }) => {
         if (data) {
@@ -133,7 +133,8 @@ io.on("connection", (socket) => {
             return
         }
 
-        playerctl("volume")
+        const { stdout } = await playerctl("volume")
+        socket.broadcast.emit("volume", stdout)
     })
 
     socket.on('disconnect', () => {
